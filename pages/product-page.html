@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Display Page</title>
+    <link rel="stylesheet" href="../style.css" />
+  </head>
+  <body>
+    <span class="add-to--cart">
+      <img src="" id="productImage" alt="product image" />
+      <div class="details">
+        <p id="name"></p>
+        <p id="description"></p>
+        <p id="price"></p>
+        <div class="button-container">
+          <label for="select">Select Quantity:</label>
+          <select name="Quantity" id="quantity">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+
+          <button onclick="addToCart()">Add to Cart</button>
+        </div>
+      </div>
+    </span>
+    <!-- Cart -->
+
+    <div class="cart hidden" id="cart">
+      <div class="title">CART</div>
+      <hr />
+
+      <p id="total-products"></p>
+    </div>
+
+    <script>
+      // const itemsArray = [];
+      const product = JSON.parse(localStorage.getItem("product"));
+      document.getElementById("name").innerText = product.name;
+      document.getElementById("price").innerText = `Price: ${product.price}`;
+      document.getElementById("description").innerText = product.description;
+      document
+        .getElementById("productImage")
+        .setAttribute("src", product.image);
+      const loadCartItems = () => {
+        let cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
+
+        if (!cartItems.length) return;
+
+        const cart = document.getElementById("cart");
+
+        while (cart.hasChildNodes()) {
+          cart.removeChild(cart.firstChild);
+        }
+        cartItems.forEach((cartItem) => {
+          const { id, price, name, image, description, quantity, subtotal } =
+            cartItem;
+
+          const cart = document.getElementById("cart");
+          const detailsElement = document.createElement("div");
+          const imageElement = document.createElement("img");
+          const nameElement = document.createElement("p");
+          const descriptionElement = document.createElement("p");
+          const priceElement = document.createElement("p");
+          const totalPriceElement = document.createElement("p");
+
+          priceElement.setAttribute("id", "price");
+          descriptionElement.setAttribute("id", "description");
+          nameElement.setAttribute("id", "name");
+          totalPriceElement.setAttribute("id", "total-price");
+
+          // const dropDown = document.createElement("select");
+
+          // Adding delete button and logic to remove item from UI as well as localstorage
+          const deleteButtonElement = document.createElement("button");
+          detailsElement.setAttribute("id", cartItem.id);
+
+          deleteButtonElement.classList.add("delete-button");
+          deleteButtonElement.onclick = () => {
+            document.getElementById(cartItem.id).remove();
+            cartItems = cartItems.filter((item) => item.id !== id);
+            localStorage.setItem("cartItems", JSON.stringify(cartItems));
+            loadCartItems();
+          };
+
+          const quantityElement = document.createElement("p");
+
+          detailsElement.appendChild(imageElement);
+          detailsElement.appendChild(nameElement);
+          detailsElement.appendChild(descriptionElement);
+          detailsElement.appendChild(priceElement);
+          detailsElement.appendChild(quantityElement);
+
+          // /////Drop Down for quantity
+          // const array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+          // for (var i = 0; i < array.length; i++) {
+          //   var option = document.createElement("option");
+          //   option.value = array[i];
+          //   option.text = array[i];
+          //   dropDown.appendChild(option);
+          // }
+          // const dropDownQuantity = dropDown.value;
+          // console.log(dropDownQuantity);
+          // dropDown.innerText = "Select Quantity:";
+          // dropDown.style.width = "100px";
+          // detailsElement.appendChild(dropDown);
+          detailsElement.appendChild(totalPriceElement);
+          detailsElement.appendChild(deleteButtonElement);
+
+          deleteButtonElement.innerText = "Delete";
+          priceElement.innerText = `Price/Item: ${price}`;
+          quantityElement.innerText = `Quantity: ${quantity}`;
+          imageElement.setAttribute("src", image);
+          nameElement.innerText = name;
+          descriptionElement.innerText = description;
+          totalPriceElement.innerText = `Subtotal: ${subtotal}`;
+          detailsElement.classList.add("details--element");
+          cart.append(detailsElement);
+
+          // console.log(detailsElement);
+          // return cartItem;
+          // document.getElementById("cart").remove;
+        });
+
+        // JSON.parse(localStorage.getItem("addedItems"));
+      };
+
+      loadCartItems();
+
+      // add to Cart Functionality
+      function addToCart() {
+        const product = JSON.parse(localStorage.getItem("product"));
+        cart.classList.remove("hidden");
+        const { price, name, image, description, quantity } = product;
+        const quantityElement = document.getElementById("quantity");
+        const quantityObtained = quantityElement.value;
+        product.quantity = quantityObtained;
+        product.subtotal = product.quantity * price;
+
+        const itemsArray = JSON.parse(localStorage.getItem("cartItems")) || [];
+
+        //////Add multiple items to cart
+        const index = itemsArray.findIndex((item) => {
+          return item.id === product.id;
+        });
+
+        if (index !== -1) {
+          const arrItem = itemsArray[index];
+
+          arrItem.quantity =
+            Number(arrItem.quantity) + Number(quantityElement.value);
+
+          arrItem.subtotal = arrItem.quantity * arrItem.price;
+
+          itemsArray[index] = arrItem;
+        } else {
+          itemsArray.push(product);
+        }
+        localStorage.setItem("cartItems", JSON.stringify(itemsArray));
+
+        // ///////////////// Show Total Products In cart!!
+        const totalItemsInCart = itemsArray.length;
+        // const productInCart = document.getElementById("total-products");
+
+        // productInCart.innerText = `Total Products: ${totalItemsInCart}`;
+        loadCartItems();
+      }
+      window.addEventListener("storage", () => {
+        console.log("hellow world");
+        loadCartItems();
+        // cart.classList.remove("hidden");
+      });
+    </script>
+  </body>
+</html>
