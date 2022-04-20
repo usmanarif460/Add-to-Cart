@@ -69,6 +69,8 @@ const createImageElement = (product) => {
   const imageElement = document.createElement("img");
   imageElement.setAttribute("src", product.image);
   imageElement.setAttribute("alt", product.name);
+  imageElement.classList.add("img-thumbnail");
+  imageElement.classList.add("card-img-top");
   return imageElement;
 };
 // Function for paragraph Element
@@ -76,6 +78,8 @@ const createParagraphElement = (product) => {
   const paragraphElement = document.createElement("p");
   paragraphElement.innerText = product.name;
   paragraphElement.setAttribute("id", "name");
+  paragraphElement.classList.add("text-danger");
+  paragraphElement.classList.add("mt-2");
   return paragraphElement;
 };
 
@@ -84,21 +88,36 @@ const createDescriptionElement = (product) => {
   const descriptionElement = document.createElement("p");
   descriptionElement.innerText = product.description;
   descriptionElement.setAttribute("id", "description");
+  descriptionElement.classList.add("text-secondary");
   return descriptionElement;
 };
 const createPriceElement = (product) => {
   const priceElement = document.createElement("p");
   priceElement.innerText = `Price: ${product.price}`;
   priceElement.setAttribute("id", "price");
+  priceElement.classList.add("text-primary");
   return priceElement;
 };
 
 const gridContainerElement = document.createElement("div");
-gridContainerElement.classList.add("grid-container");
+
+gridContainerElement.classList.add("container");
+gridContainerElement.classList.add("row");
+gridContainerElement.classList.add("mb-5");
+gridContainerElement.classList.add("mt-5");
 
 const createProductDynamically = (product) => {
   const div = document.createElement("div");
-  div.classList.add("inner-div");
+
+  // div.classList.add("border");
+  div.classList.add("col-12");
+
+  div.classList.add("col-md-6");
+  div.classList.add("col-lg-4");
+  div.classList.add("d-flex");
+  div.classList.add("flex-column");
+  // div.classList.add("p-5");
+  // div.classList.add("shadow-sm");
   div.onclick = () => {
     localStorage.setItem("product", JSON.stringify(product));
     window.open("/pages/product-page.html");
