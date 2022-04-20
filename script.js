@@ -117,3 +117,4 @@ products.forEach((product) => {
 });
 
 document.body.append(gridContainerElement);
+console.log("hello World");
